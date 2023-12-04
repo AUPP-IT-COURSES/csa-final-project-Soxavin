@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Application</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Merriweather&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Jost', sans-serif, arial;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #EBE3D5;
+            margin: 40px;
+            scroll-behavior: smooth;
+            text-align: center;
+        }
+
+        .beginning-container {
+            background-color: #f0f0f0;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 5px 7px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: black;
+            font-size: 28px;
+            text-transform: capitalize;
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: #FFF2D8; /* Light yellow */
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        h3 {
+            font-weight: bold;
+            color: #113946; /* Dark blue */
+            font-size: 23px;
+            margin-bottom: 15px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recipe-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .recipe-box {
+            background-color: #FFF2D8; /* Light yellow */
+            border: 2px solid #EAD7BB; /* Light beige */
+            padding: 20px;
+            margin: 10px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all .4s;
+            text-align: center;
+            border-radius: 10px; /* Rounded corners */
+        }
+
+        .recipe-box:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        .recipe-container recipe-box {
+            font-size: 50px;
+            display: block;
+            text-align: center;
+            margin: 25px 0px;
+            color: black;
+        }
+
+        .recipe-title {
+            line-height: 1.2;
+            max-height: 3.6em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            margin-bottom: 10px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-family: 'Merriweather', serif;            
+            font-weight: bold;
+            color: #113946; /* Dark blue */
+            font-size: 23px;
+            margin-bottom: 15px;
+        }
+
+        img {
+            display: block;
+            margin: 0 auto;
+            width: 100%; /* Make images reach the edge of the container */
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        a {
+            display: block;
+            margin-top: 10px;
+            color: #BCA37F; /* Light brown */
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        input[type="submit"] {
+            padding: 10px;
+            background-color: #113946; /* Dark blue */
+            color: #FFF2D8; /* Light yellow */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #BCA37F; /* Light brown */
+        }
+
+        input[type="text"] {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .center-text h2 {
+            color: black;
+            font-size: 28px;
+            text-transform: capitalize;
+            text-align: center;
+        }
+
+        /* Styling for the results container */
+        .results-container {
+            background-color: #F3EEEA;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 5px 7px rgba(0, 0, 0, 0.1);
+
+        }
+
+        .results-heading {
+            color: #113946; /* Dark blue */
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="beginning-container">
+        <div class="center-text">
+            <h2>Recipe App</h2>
+        </div>
+        <form method="POST" action="/">
+            <input type="text" name="search_query" placeholder="Search for recipes">
+            <input type="submit" value="Search">
+            <a href="/" class="button">Home</a>
+            <a href="/history">Recipe History</a>
+
+        </form>
+    </div>
+    <!-- Check if recipes are available-->
+    {% if recipes %}
+    <div class="results-container">
+        <h3 class="results-heading">Showing Results For "{{ search_query }}":</h3>
+        <div class="recipe-container">
+            {% for recipe in recipes %}
+            <div class="recipe-box" onclick="window.location='{{ url_for('view_recipe', recipe_id=recipe.id, search_query=search_query) }}';">
+                <h3 class="recipe-title">{{ recipe.title }}</h3>
+                {% if recipe.image %}
+                    <img src="{{ recipe.image }}" alt="{{ recipe.title }}">
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- If no recipes are found -->
+    {% else %}
+    <p>No recipes found.</p>
+    {% endif %}
+</body>
+</html>
