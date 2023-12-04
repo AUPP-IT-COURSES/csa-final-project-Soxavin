@@ -12,7 +12,7 @@ app.secret_key = 'AUPPRecipeWebsite'
 app.config['SESSION_TYPE'] = 'filesystem'
 
 # Replace with your Spoonacular API key
-API_KEY = '707d065c947c40cb934f3313b72b40f1'
+API_KEY = 'deeaf2c583bc41f28841a6dec3deb1cc'
 
 # Flag to check if it's the first run
 first_run = True
