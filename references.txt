@@ -3,3 +3,7 @@ List of references:
 1) https://www.youtube.com/watch?v=yVdvR7fZ0A0
 
 2) https://github.com/achudnova/projects-yt/tree/main/FlaskProjects/RecipeApp
+
+3) AI
+
+4) Own personal knowledge
