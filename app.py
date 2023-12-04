@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, session, redirect
 import requests
 from urllib.parse import unquote
-from history import get_user_history, add_to_history  # Import history functions
+from history import get_user_history, add_to_history
 from jinja2 import Environment
 
 # Create the flask app
