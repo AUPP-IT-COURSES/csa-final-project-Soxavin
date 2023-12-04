@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ recipe.title }} - Print Recipe</title>
+    <!-- Add any additional styling for the print page -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eee; /* Gray background */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .recipe-container {
+            max-width: 800px;
+            max-height: auto;
+            background-color: #fff; /* White background for the recipe */
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd; /* Border for A4 paper effect */
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin: 20px; /* Add margin to the container */
+        }
+
+        .image-container,
+        .ingredients-container,
+        .instructions-container {
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            display: block; /* Prevents extra space beneath the image */
+            margin-bottom: 10px;
+        }
+
+        .ingredients-container {
+            flex-grow: 1;
+            max-width: calc(40% - 20px); /* Adjust as needed */
+            margin-right: 20px;
+        }
+
+        .ingredients-container ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .ingredients-container li {
+            margin-bottom: 5px;
+        }
+
+        .instructions-container {
+            flex-grow: 1;
+            max-width: 100%;
+        }
+
+        .instructions-container ol {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .instructions-container li {
+            margin-bottom: 5px;
+        }
+
+        @media print {
+            .recipe-container {
+                display: flex;
+                flex-direction: row;
+            }
+
+            .image-container,
+            .ingredients-container,
+            .instructions-container {
+                box-sizing: border-box;
+                max-width: 100%;
+                width: 100%;
+                margin-bottom: 0;
+            }
+
+            img {
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin-bottom: 10px;
+            }
+
+            h1, h2, p {
+                margin: 0;
+            }
+
+            h1 {
+                color: #3498db;
+            }
+
+            h2 {
+                color: #333;
+            }
+
+            @page {
+                size: A4;
+                margin: 1cm 2cm; /* Adjust the top and bottom margins as needed */
+            }
+        }
+
+        /* Optional: Styles for better user experience (not applied in print) */
+        body {
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f4f4f4;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+
+        select {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Optional: Dropdown menu for layout selection -->
+    <label for="layout">Select Layout:</label>
+    <select id="layout" onchange="changeLayout(this.value)">
+        <option value="vertical">Vertical</option>
+        <option value="horizontal">Horizontal</option>
+    </select>
+
+    <!-- Recipe container for centering and styling -->
+    <div class="recipe-container">
+        <!-- Image container -->
+        <div class="image-container">
+            <img src="{{ recipe.image }}" alt="{{ recipe.title }}">
+        </div>
+
+        <!-- Ingredients container -->
+        <div class="ingredients-container">
+            <h2>Ingredients:</h2>
+            <ul>
+                {% for ingredient in recipe.extendedIngredients %}
+                    <li>{{ ingredient.original }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Instructions container -->
+        <div class="instructions-container">
+            <h2>Instructions:</h2>
+            <ol>
+                {% for instruction in recipe.analyzedInstructions[0].steps %}
+                    <li>{{ instruction.step }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript function to change layout
+        function changeLayout(layout) {
+            const container = document.querySelector('.recipe-container');
+            if (layout === 'horizontal') {
+                container.style.flexDirection = 'row';
+                container.style.maxWidth = '100%'; // Full width in horizontal layout
+            } else {
+                container.style.flexDirection = 'column';
+                container.style.maxWidth = '800px'; // Adjust max width as needed
+            }
+        }
+
+        // Trigger the function on page load to set the initial layout
+        document.addEventListener('DOMContentLoaded', function() {
+            const layoutSelect = document.getElementById('layout');
+            changeLayout(layoutSelect.value);
+        });
+    </script>
+</body>
+</html>

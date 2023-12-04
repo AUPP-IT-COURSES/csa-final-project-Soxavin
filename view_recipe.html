@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ recipe.title }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+        }
+
+        header {
+            background-color: #3498db;
+            padding: 15px;
+            color: white;
+        }
+
+        h1, h2 {
+            margin: 10px 0;
+            color: #3498db;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .recipe-details {
+            max-width: 700px;
+            margin: 20px auto;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            text-align: left;
+            margin: 20px 0 10px;
+            color: #3498db;
+        }
+
+        .ingredient-list, .instruction-list {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            text-align: left;
+        }
+
+        .ingredient-list li, .instruction-list li {
+            margin-bottom: 10px;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background-color: #3498db;
+            padding: 10px;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Styles for the history container */
+        .history-container {
+            max-width: 700px;
+            margin: 20px auto;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-container h2 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .history-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .history-item {
+            margin-bottom: 10px;
+            background-color: #FFF2D8;
+            border: 2px solid #EAD7BB;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all .4s;
+            border-radius: 10px;
+        }
+
+        .history-item:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        .history-item a {
+            text-decoration: none;
+            color: #113946;
+            font-weight: bold;
+        }
+
+        .history-item a:hover {
+            text-decoration: underline;
+        }
+
+        .share-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .share-links {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 5px;
+            z-index: 1;
+            top: 100%; /* Position below the button */
+            left: 0;
+            min-width: 160px;
+            border: solid lightgray 1px;
+        }
+
+        .hi {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer; /* Add cursor style for better UX */
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>{{ recipe.title }}</h1>
+    </header>
+
+    <div class="recipe-details">
+        <!-- Display the recipe image if available -->
+        {% if recipe.image %}
+        <img src="{{ recipe.image }}" alt="{{ recipe.title }}">
+        {% endif %}
+
+        <!-- Ingredients section -->
+        <h2 class="section-title">Ingredients</h2>
+        <!-- Create an unordered list for displaying the ingredients -->
+        <ul class="ingredient-list">
+            <!-- Loop through each ingredient in the recipe's extendedIngredients -->
+            {% for ingredient in recipe.extendedIngredients %}
+            <li>{{ ingredient.original }}</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Instructions Section -->
+        <h2 class="section-title">Instructions</h2>
+        <ol class="instruction-list">
+            {% for step in recipe.analyzedInstructions[0].steps %}
+            <li>{{ step.step }}</li>
+            {% endfor %}
+        </ol>
+
+       <!-- Add this link where you want the "Print" button to appear -->
+       <a href="{{ url_for('print_recipe', recipe_id=recipe.id) }}" target="_blank">Print this recipe</a>
+         | 
+       <!-- Add this link where you want the "Share" button to appear -->
+        <div class="share-container" onclick="toggleShareLinks()">
+            <span class="hi">Share this recipe</span>
+            <div class="share-links" id="shareLinks">
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ url_for('view_recipe', recipe_id=recipe.id, _external=True) }}" target="_blank">Share on Facebook</a>
+                <a href="https://twitter.com/intent/tweet?url={{ url_for('view_recipe', recipe_id=recipe.id, _external=True) }}&text={{ recipe.title }}" target="_blank">Share on Twitter</a>
+            </div>
+        </div>
+         | 
+        <!-- Back to search results link -->
+        <a href="{{ url_for('index') }}">Back to Home Page</a>
+    </div>
+
+    <!-- History container -->
+    <div class="history-container">
+        <h2>Recipe History</h2>
+        <ul class="history-list">
+            {% for recipe_info in user_history %}
+                {% if is_dict(recipe_info) %}
+                    {% if 'recipe_id' in recipe_info and 'title' in recipe_info %}
+                        <li class="history-item">
+                            <a href="{{ url_for('view_recipe', recipe_id=recipe_info.recipe_id) }}">
+                                {{ recipe_info.title }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+
+ 
+        <!-- Back to History Page link -->
+        <a href="{{ url_for('recipe_history') }}">Back to History Page</a>
+    </div>
+
+    <script>
+        function toggleShareLinks() {
+            var shareLinks = document.getElementById("shareLinks");
+            shareLinks.style.display = shareLinks.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
+    
+</body>
+</html>
